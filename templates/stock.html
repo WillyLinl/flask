@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>亞股資訊</h1>
+        <p class="date">{{date}}</p>
+
+        {% for stock in stocks %}
+        <li>
+            {{stock.分類}}-<span class="idx">{{stock.指數}}</span>
+        </li>
+        {% endfor %}
+
+    </div>
+</body>
+
+</html>
