@@ -1,12 +1,10 @@
 from flask import Flask, render_template
 from datetime import datetime
-import requests
-from bs4 import BeautifulSoup
-resp = requests.get(url)
+from crawler.stock import get_stock
+from crawler.lottory import get_lottory
+
 
 app = Flask(__name__)
-# 產生Flask物件
-# __name__當前本身
 
 
 @app.route("/bmi/height=<h>&weight=<w>")
@@ -20,7 +18,7 @@ def get_bmi(h, w):
         return "資料有誤!"
 
 
-@app.route("/book/<int:id>")#網址帶參數預設為<string:參數名稱>需要修改成<int:id>
+@app.route("/book/<int:id>")
 def book(id):
     books = {1: "Python", 2: "Java", 3: "C++"}
     try:
@@ -33,14 +31,11 @@ def book(id):
 @app.route("/today")
 def today():
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return f"<h1>{datetime.now()}</h1>" #回傳文字訊息到前端網頁
-
-    # 顯示目前日期跟時間
-    # ■ 新增route(/date)
+    return f"<h1>{datetime.now()}</h1>"
 
 
 @app.route("/index")
-@app.route("/")  # 裝飾器綁定 網址跟方法
+@app.route("/")
 def index():
     name = "jerry"
     date = get_today()
@@ -53,25 +48,22 @@ def get_today():
     return date
 
 
+@app.route("/lottory")
+def lottory():
+    return render_template("lottory.html", lottorys=get_lottory())
+
+
 @app.route("/stock")
 def stock():
-    
+    # 呼叫爬蟲程式
+    stocks = get_stock()
     for stock in stocks:
         print(stock["分類"], stock["指數"])
 
     return render_template("stock.html", date=get_today(), stocks=stocks)
 
 
-if __name__ == "__main__":  # 啟動
-    # 全域端宣告
-    stocks = [
-        {"分類": "日經指數", "指數": "22,920.30"},
-        {"分類": "韓國綜合", "指數": "2,304.59"},
-        {"分類": "香港恆生", "指數": "25,083.71"},
-        {"分類": "上海綜合", "指數": "3,380.68"},
-    ]
-    print(get_bmi(167, 67.5))
+if __name__ == "__main__":
+    # print(get_bmi(167, 67.5))
     # print(stock())
     app.run(debug=True)
-    # 程式碼修改後需要儲存(debug=True)➔ (自動刷新)
-    # CTRL+C(停止Server)
